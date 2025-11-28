@@ -7,6 +7,7 @@ class Item extends StatelessWidget {
   final Country? country;
   final bool? showFlag;
   final bool? useEmoji;
+  final bool? showNumber;
   final TextStyle? textStyle;
   final bool withCountryNames;
   final double? leadingPadding;
@@ -17,6 +18,7 @@ class Item extends StatelessWidget {
     this.country,
     this.showFlag,
     this.useEmoji,
+    this.showNumber,
     this.textStyle,
     this.withCountryNames = false,
     this.leadingPadding = 12,
@@ -41,11 +43,12 @@ class Item extends StatelessWidget {
             useEmoji: useEmoji,
           ),
           SizedBox(width: 12.0),
-          Text(
-            '$dialCode',
-            textDirection: TextDirection.ltr,
-            style: textStyle,
-          ),
+          if (showNumber ?? false)
+            Text(
+              '$dialCode',
+              textDirection: TextDirection.ltr,
+              style: textStyle,
+            ),
         ],
       ),
     );

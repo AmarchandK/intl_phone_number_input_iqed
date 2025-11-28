@@ -45,6 +45,7 @@ class SelectorButton extends StatelessWidget {
                     country: country,
                     showFlag: selectorConfig.showFlags,
                     useEmoji: selectorConfig.useEmoji,
+                    showNumber: selectorConfig.showNumber,
                     leadingPadding: selectorConfig.leadingPadding,
                     trailingSpace: selectorConfig.trailingSpace,
                     textStyle: selectorTextStyle,
@@ -57,6 +58,7 @@ class SelectorButton extends StatelessWidget {
             : Item(
                 country: country,
                 showFlag: selectorConfig.showFlags,
+                showNumber: selectorConfig.showNumber,
                 useEmoji: selectorConfig.useEmoji,
                 leadingPadding: selectorConfig.leadingPadding,
                 trailingSpace: selectorConfig.trailingSpace,
@@ -84,14 +86,25 @@ class SelectorButton extends StatelessWidget {
                   }
                 : null,
             child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Item(
-                country: country,
-                showFlag: selectorConfig.showFlags,
-                useEmoji: selectorConfig.useEmoji,
-                leadingPadding: selectorConfig.leadingPadding,
-                trailingSpace: selectorConfig.trailingSpace,
-                textStyle: selectorTextStyle,
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Item(
+                    country: country,
+                    showFlag: selectorConfig.showFlags,
+                    useEmoji: selectorConfig.useEmoji,
+                    leadingPadding: selectorConfig.leadingPadding,
+                    trailingSpace: selectorConfig.trailingSpace,
+                    textStyle: selectorTextStyle,
+                  ),
+                  SizedBox(width: 4.0),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.grey[700],
+                    size: 20.0,
+                  ),
+                ],
               ),
             ),
           );

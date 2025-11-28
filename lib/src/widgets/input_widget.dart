@@ -202,7 +202,7 @@ class InternationalPhoneNumberInput extends StatefulWidget {
 
   /// Placeholder text displayed when the input is empty.
   ///
-  /// Defaults to 'Phone number'.
+  /// Defaults to 'Mobile Number'.
   final String? hintText;
 
   /// Error message displayed when validation fails.
@@ -341,6 +341,56 @@ class InternationalPhoneNumberInput extends StatefulWidget {
   /// ```
   final List<String>? countries;
 
+  /// Background color for the selector button container.
+  ///
+  /// Defaults to [Colors.white]. Set to null to use transparent background.
+  final Color? selectorButtonBackgroundColor;
+
+  /// Border radius for the selector button container.
+  ///
+  /// Defaults to [BorderRadius.circular(8.0)].
+  final BorderRadius? selectorButtonBorderRadius;
+
+  /// Background color for the text field container.
+  ///
+  /// Defaults to [Colors.grey[200]]. Set to null to use transparent background.
+  final Color? textFieldBackgroundColor;
+
+  /// Border radius for the text field container.
+  ///
+  /// Defaults to [BorderRadius.circular(8.0)].
+  final BorderRadius? textFieldBorderRadius;
+
+  /// Color of the gap between selector button and text field.
+  ///
+  /// Defaults to [Colors.grey[800]]. Set to null to use transparent gap.
+  final Color? gapColor;
+
+  /// Height of the selector button container.
+  ///
+  /// If null, the height will be determined by the content.
+  final double? selectorButtonHeight;
+
+  /// Height of the text field container.
+  ///
+  /// If null, the height will be determined by the content.
+  final double? textFieldHeight;
+
+  /// Width of the gap between selector button and text field.
+  ///
+  /// Defaults to 1.0. Set to 0.0 to remove the gap.
+  final double gapWidth;
+
+  /// Padding for the selector button container.
+  ///
+  /// Defaults to [EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0)].
+  final EdgeInsets? selectorButtonPadding;
+
+  /// Padding for the text field container.
+  ///
+  /// Defaults to [EdgeInsets.symmetric(horizontal: 12.0)].
+  final EdgeInsets? textFieldPadding;
+
   InternationalPhoneNumberInput(
       {Key? key,
       this.selectorConfig = const SelectorConfig(),
@@ -355,7 +405,7 @@ class InternationalPhoneNumberInput extends StatefulWidget {
       this.keyboardAction,
       this.keyboardType = TextInputType.phone,
       this.initialValue,
-      this.hintText = 'Phone number',
+      this.hintText = 'Mobile Number',
       this.errorMessage = 'Invalid phone number',
       this.selectorButtonOnErrorPadding = 24,
       this.spaceBetweenSelectorAndTextField = 12,
@@ -379,7 +429,17 @@ class InternationalPhoneNumberInput extends StatefulWidget {
       this.focusNode,
       this.cursorColor,
       this.autofillHints,
-      this.countries})
+      this.countries,
+      this.selectorButtonBackgroundColor,
+      this.selectorButtonBorderRadius,
+      this.textFieldBackgroundColor,
+      this.textFieldBorderRadius,
+      this.gapColor,
+      this.selectorButtonHeight,
+      this.textFieldHeight,
+      this.gapWidth = 1.0,
+      this.selectorButtonPadding,
+      this.textFieldPadding})
       : super(key: key);
 
   @override
@@ -640,10 +700,48 @@ class _InputWidgetView
   _InputWidgetView({Key? key, required this.state})
       : super(key: key, state: state);
 
+  /// Creates a decoration for the text field with transparent background
+  /// to show the container's background color
+  InputDecoration _getTextFieldDecoration(InputDecoration? baseDecoration) {
+    final decoration = baseDecoration ??
+        InputDecoration(
+          border: InputBorder.none,
+          hintText: widget.hintText,
+        );
+
+    return decoration.copyWith(
+      filled: true,
+      fillColor: Colors.transparent,
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      errorBorder: InputBorder.none,
+      disabledBorder: InputBorder.none,
+      focusedErrorBorder: InputBorder.none,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final countryCode = state.country?.alpha2Code ?? '';
     final dialCode = state.country?.dialCode ?? '';
+
+    // Default values for styling
+    final selectorBgColor =
+        widget.selectorButtonBackgroundColor ?? Colors.white;
+    final selectorBorderRadius =
+        widget.selectorButtonBorderRadius ?? BorderRadius.circular(8.0);
+    final textFieldBgColor =
+        widget.textFieldBackgroundColor ?? Colors.grey[200]!;
+    final textFieldBorderRadius =
+        widget.textFieldBorderRadius ?? BorderRadius.circular(8.0);
+    final selectorPadding = widget.selectorButtonPadding ??
+        EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0);
+    final textFieldPaddingValue =
+        widget.textFieldPadding ?? EdgeInsets.symmetric(horizontal: 12.0);
+    final defaultHeight = 48.0;
+    final selectorHeight = widget.selectorButtonHeight ?? defaultHeight;
+    final textFieldHeightValue = widget.textFieldHeight ?? defaultHeight;
 
     return Container(
       child: Row(
@@ -653,18 +751,33 @@ class _InputWidgetView
           if (!widget.selectorConfig.setSelectorButtonAsPrefixIcon) ...[
             Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SelectorButton(
-                  country: state.country,
-                  countries: state.countries,
-                  onCountryChanged: state.onCountryChanged,
-                  selectorConfig: widget.selectorConfig,
-                  selectorTextStyle: widget.selectorTextStyle,
-                  searchBoxDecoration: widget.searchBoxDecoration,
-                  locale: state.locale,
-                  isEnabled: widget.isEnabled,
-                  autoFocusSearchField: widget.autoFocusSearch,
-                  isScrollControlled: widget.countrySelectorScrollControlled,
+                Container(
+                  height: selectorHeight,
+                  constraints: BoxConstraints(
+                    minHeight: selectorHeight,
+                  ),
+                  padding: selectorPadding,
+                  decoration: BoxDecoration(
+                    color: selectorBgColor,
+                    borderRadius: selectorBorderRadius,
+                  ),
+                  child: Center(
+                    child: SelectorButton(
+                      country: state.country,
+                      countries: state.countries,
+                      onCountryChanged: state.onCountryChanged,
+                      selectorConfig: widget.selectorConfig,
+                      selectorTextStyle: widget.selectorTextStyle,
+                      searchBoxDecoration: widget.searchBoxDecoration,
+                      locale: state.locale,
+                      isEnabled: widget.isEnabled,
+                      autoFocusSearchField: widget.autoFocusSearch,
+                      isScrollControlled:
+                          widget.countrySelectorScrollControlled,
+                    ),
+                  ),
                 ),
                 SizedBox(
                   height: state.selectorButtonBottomPadding,
@@ -673,41 +786,54 @@ class _InputWidgetView
             ),
             SizedBox(width: widget.spaceBetweenSelectorAndTextField),
           ],
-          Flexible(
-            child: TextFormField(
-              key: widget.fieldKey ?? Key(TestHelper.TextInputKeyValue),
-              textDirection: TextDirection.ltr,
-              controller: state.controller,
-              cursorColor: widget.cursorColor,
-              focusNode: widget.focusNode,
-              enabled: widget.isEnabled,
-              autofocus: widget.autoFocus,
-              keyboardType: widget.keyboardType,
-              textInputAction: widget.keyboardAction,
-              style: widget.textStyle,
-              decoration: state.getInputDecoration(widget.inputDecoration),
-              textAlign: widget.textAlign,
-              textAlignVertical: widget.textAlignVertical,
-              onEditingComplete: widget.onSubmit,
-              onFieldSubmitted: widget.onFieldSubmitted,
-              autovalidateMode: widget.autoValidateMode,
-              autofillHints: widget.autofillHints,
-              validator: widget.validator ?? state.validator,
-              onSaved: state.onSaved,
-              scrollPadding: widget.scrollPadding,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(widget.maxLength),
-                widget.formatInput
-                    ? AsYouTypeFormatter(
-                        isoCode: countryCode,
-                        dialCode: dialCode,
-                        onInputFormatted: (TextEditingValue value) {
-                          state.controller!.value = value;
-                        },
-                      )
-                    : FilteringTextInputFormatter.digitsOnly,
-              ],
-              onChanged: state.onChanged,
+          Expanded(
+            child: Container(
+              alignment: Alignment.center,
+              height: textFieldHeightValue,
+              constraints: BoxConstraints(
+                minHeight: textFieldHeightValue,
+              ),
+              padding: textFieldPaddingValue,
+              decoration: BoxDecoration(
+                color: textFieldBgColor,
+                borderRadius: textFieldBorderRadius,
+              ),
+              child: TextFormField(
+                key: widget.fieldKey ?? Key(TestHelper.TextInputKeyValue),
+                textDirection: TextDirection.ltr,
+                controller: state.controller,
+                cursorColor: widget.cursorColor,
+                focusNode: widget.focusNode,
+                enabled: widget.isEnabled,
+                autofocus: widget.autoFocus,
+                keyboardType: widget.keyboardType,
+                textInputAction: widget.keyboardAction,
+                style: widget.textStyle,
+                decoration: _getTextFieldDecoration(
+                    state.getInputDecoration(widget.inputDecoration)),
+                textAlign: widget.textAlign,
+                textAlignVertical: widget.textAlignVertical,
+                onEditingComplete: widget.onSubmit,
+                onFieldSubmitted: widget.onFieldSubmitted,
+                autovalidateMode: widget.autoValidateMode,
+                autofillHints: widget.autofillHints,
+                validator: widget.validator ?? state.validator,
+                onSaved: state.onSaved,
+                scrollPadding: widget.scrollPadding,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(widget.maxLength),
+                  widget.formatInput
+                      ? AsYouTypeFormatter(
+                          isoCode: countryCode,
+                          dialCode: dialCode,
+                          onInputFormatted: (TextEditingValue value) {
+                            state.controller!.value = value;
+                          },
+                        )
+                      : FilteringTextInputFormatter.digitsOnly,
+                ],
+                onChanged: state.onChanged,
+              ),
             ),
           )
         ],

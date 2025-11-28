@@ -64,6 +64,13 @@ class SelectorConfig {
   /// Defaults to false (uses PNG assets).
   final bool useEmoji;
 
+  /// Whether to show the country number.
+  ///
+  /// When true, shows the country number alongside the flag.
+  ///
+  /// Defaults to false.
+  final bool showNumber;
+
   /// Custom function for sorting the country list.
   ///
   /// When provided, countries will be sorted according to this comparator function.
@@ -139,6 +146,7 @@ class SelectorConfig {
     this.selectorType = PhoneInputSelectorType.DROPDOWN,
     this.showFlags = true,
     this.useEmoji = false,
+    this.showNumber = true,
     this.countryComparator,
     this.setSelectorButtonAsPrefixIcon = false,
     this.leadingPadding,
